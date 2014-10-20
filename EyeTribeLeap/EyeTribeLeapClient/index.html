@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>Test</title>
+	</head>
+	<body>
+		<script src="pubsub.js"></script>
+		<script src="Client.js"></script>
+		<script>
+			new Realise.eyeTribeDemo.Client();
+			
+			//document.addEventListener("winkLeft", function() { console.log('wink left'); });
+			PubSub.subscribe( 'moveHandLeft', function(){
+				console.log('move left hand');
+			});
+			PubSub.subscribe( 'moveHandRight', function(){
+				console.log('move right hand');
+			});
+		</script>
+	</body>
+</html>
