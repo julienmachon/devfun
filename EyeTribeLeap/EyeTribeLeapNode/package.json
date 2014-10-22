@@ -1,0 +1,19 @@
+{
+  "author": "Julien Machon <julienmachon@gmail.com>",
+  "name": "EyeTribeLeapNode",
+  "description": "Reads incoming messages on both Leap and EyeTribe websocket servers created by their respective daemon",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/julienmachon/devfun.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cylon": "^0.19.1",
+    "cylon-leapmotion": "^0.13.0"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
