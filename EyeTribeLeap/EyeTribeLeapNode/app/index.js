@@ -1,19 +1,23 @@
 var WebSocketServer = require('../node_modules/ws').Server,
-WebSocket = require('../node_modules/ws'),
-Cylon = require('../node_modules/cylon'),
-pf = require('../node_modules/policyfile').createServer(),
-EyeTribe = require('./eyetribe.js');
+  Cylon = require('../node_modules/cylon'),
+  pf = require('../node_modules/policyfile').createServer(),
+  EyeTribe = require('./eyetribe.js');
 
 
-//stock the connections in here
+// Stock the connections in here
 var connections = [];
 
+// Start Policy file
 pf.listen();
+
+// Start WEb Socket Server
 wss = new WebSocketServer({port: 8887});
 wss.on('connection', function(ws){
 	console.log('connection....')
 	connections.push(ws);
 });
+
+EyeTribe.start(connections);
 
 Cylon.robot({
 	connection: {
@@ -50,15 +54,3 @@ Cylon.robot({
 	}
 }).start();
 
-//EyeTribe
-//var ws = new WebSocket('ws://localhost:6555');
-//ws.on('open', function(e) {console.log('lol');})
-//ws.on('message', function(e) {
-//
-//	//   category: '...',
-//	//   request: '...',
-//	//   statuscode: ...,
-//	//   values: { ... }
-//	// } 
-//	console.log(JSON.parse(e.data));
-//});
