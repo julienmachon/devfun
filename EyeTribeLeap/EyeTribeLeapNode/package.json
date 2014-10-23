@@ -10,7 +10,8 @@
   "dependencies": {},
   "devDependencies": {
     "cylon": "^0.19.1",
-    "cylon-leapmotion": "^0.13.0"
+    "cylon-leapmotion": "^0.13.0",
+    "ws": "^0.4.32"
   },
   "optionalDependencies": {},
   "engines": {
