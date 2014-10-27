@@ -2,12 +2,14 @@ var WebSocketServer = require('../node_modules/ws').Server,
   pf = require('../node_modules/policyfile').createServer(),
   EyeTribe = require('./eyetribe.js'),
   LeapMotion = require('./leapmotion.js'),
-  uEmitter = require('./dataEmitter/unityEmitter.js');
+  UnityEmitter = require('./dataEmitter/unityEmitter.js'),
+  LeapDataHandler = require('./dataHandler/leapDataHandler.js');
 
 
 // Stock the connections in here
 var connections = [];
-var emitter = new uEmitter(connections);
+var emitter = new UnityEmitter(connections);
+var ldh = new LeapDataHandler();
 
 // Start Policy file
 pf.listen();
@@ -19,6 +21,6 @@ wss.on('connection', function(ws){
 	connections.push(ws);
 });
 
-EyeTribe.start(connections);
-LeapMotion.start('new LeapDataHandler()', 'new UnityEmitter(connections)');
+//EyeTribe.start(connections);
+LeapMotion(ldh, emitter).start();
 

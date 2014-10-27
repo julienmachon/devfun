@@ -8,10 +8,9 @@ var de = require('./dataEmitter.js');
  */
 
 function UnityEmitter(connections) {
-	de.DataEmitter.call(this);
+	de.call(this);
 }	
-console.log(de);
-util.inherits(UnityEmitter, de.DataEmitter);
+util.inherits(UnityEmitter, de);
 
 /**
  * Implements abstract method `send` defined in DataEmitter class 
@@ -20,6 +19,7 @@ util.inherits(UnityEmitter, de.DataEmitter);
  */ 
 
 UnityEmitter.prototype.send = function(data) {
+	//TODO: tests
 	for(var c in this.connections) {
 		this.connections.send('{"command" : "' + data.command + '", "state" : "' + data.state + '"}')
 	}

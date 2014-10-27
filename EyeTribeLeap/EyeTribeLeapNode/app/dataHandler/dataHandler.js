@@ -10,6 +10,7 @@
  * @constructor
  **/
 function DataHandler() {
+	this.states = {};
 }
 
 /**

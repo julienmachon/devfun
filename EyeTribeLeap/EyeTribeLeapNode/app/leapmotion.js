@@ -10,7 +10,7 @@ var  Cylon = require('../node_modules/cylon');
 var LeapMotion = (function(handler, emitter) {
 	var handler = handler;
 	var emitter = emitter;
-
+	
 	//Create a new Instance of Cylon.robot
 	var robot = Cylon.robot({
 		connection: {
@@ -26,23 +26,11 @@ var LeapMotion = (function(handler, emitter) {
 
 		work: function(my) {
 			my.leapmotion.on('hand', function(payload) {
-				//console.log(payload.toString());
+			//	handler.process(payload);
 			});
-
 			my.leapmotion.on('gesture', function(payload) {
-				if(payload.type === 'circle' && payload.state === 'stop'){
-					for(c in connections) {
-						connections[c].send('{"command": "wave", "state":"false"}');
-					}
-					console.log(payload);
-				}
-				if(payload.type === 'circle' && payload.state != 'stop'){
-					for(c in connections) {
-						connections[c].send('{"command": "wave", "state":"true"}');
-					}
-					console.log(payload);
-				}
-
+				var s = handler.processGesture(payload);
+				console.log(s);
 			});
 		}
 	});
@@ -52,7 +40,7 @@ var LeapMotion = (function(handler, emitter) {
 			robot.start();
 		}
 	};
-}());
+});
 
 
 module.exports = LeapMotion;

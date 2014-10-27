@@ -11,6 +11,7 @@
   "devDependencies": {
     "cylon": "^0.19.1",
     "cylon-leapmotion": "^0.13.0",
+    "policyfile": "0.0.5",
     "ws": "^0.4.32"
   },
   "optionalDependencies": {},
