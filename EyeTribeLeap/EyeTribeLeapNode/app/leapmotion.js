@@ -29,7 +29,7 @@ var LeapMotion = (function(handler) {
 			});
 			my.leapmotion.on('gesture', function(payload) {
 				//Get the Handler to process the gesture
-				handler.processGesture(payload);
+				handler.process(payload);
 			});
 		}
 	});

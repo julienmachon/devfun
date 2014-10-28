@@ -1,5 +1,6 @@
 /**
- * Defines a hight level data handler
+ * Abstract class.
+ * Hight level definition of a Data handler.
  * @class
  **/
 
@@ -12,23 +13,22 @@
  **/
 function DataHandler(emitter) {
 	this.emitter = emitter;
-	this.states = {};
 }
 
 /**
- *
- * 
+ * Returns a reference to emitter
+ * @return emitter - the emitter used by data handler
  **/
 DataHandler.prototype.getEmitter = function() {
 	return this.emitter;
 };
 
 /**
- * Processes a bunch of data
+ * Processes something 
  * @abstract
  */
 
-DataHandler.prototype.process = function(data) {
+DataHandler.prototype.process = function() {
 	throw new Error('must be implemented by subclass!');
 };
 

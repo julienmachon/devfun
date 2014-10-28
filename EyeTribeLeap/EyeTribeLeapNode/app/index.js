@@ -23,6 +23,6 @@ wss.on('connection', function(ws){
 
 var emitter = new UnityEmitter(wss);
 
-EyeTribe(new EyeTribeDataHandler(emitter)).start();
+//EyeTribe(new EyeTribeDataHandler(emitter)).start();
 LeapMotion(new LeapDataHandler(emitter)).start();
 

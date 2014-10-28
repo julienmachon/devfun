@@ -7,19 +7,16 @@
 /**
  * Represents a Data Emitter
  * @constructor
- * @param {array} connections - A list of connections
  */
-function DataEmitter(connections) {
-	this.connections = connections;
+function DataEmitter() {
 }
 
 
 /**
- * Sends data to all connections
+ * Sends something somewhere somehow
  * @abstract
- * @param {JSON} data
  */
-DataEmitter.prototype.send = function(data){
+DataEmitter.prototype.send = function(){
 	throw new Error('must be implemented by subclass!');
 };
 
