@@ -7,9 +7,8 @@ var  Cylon = require('../node_modules/cylon');
  * @param {DataEmitter} emitter
  */
 
-var LeapMotion = (function(handler, emitter) {
+var LeapMotion = (function(handler) {
 	var handler = handler;
-	var emitter = emitter;
 	
 	//Create a new Instance of Cylon.robot
 	var robot = Cylon.robot({
@@ -29,8 +28,8 @@ var LeapMotion = (function(handler, emitter) {
 			//	handler.process(payload);
 			});
 			my.leapmotion.on('gesture', function(payload) {
-				var s = handler.processGesture(payload);
-				console.log(s);
+				//Get the Handler to process the gesture
+				handler.processGesture(payload);
 			});
 		}
 	});

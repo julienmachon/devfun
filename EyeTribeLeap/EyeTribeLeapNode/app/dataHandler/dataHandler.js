@@ -8,10 +8,20 @@
  * Handles data
  *
  * @constructor
+ * @param {DataEmitter} emitter - the emitter object used to emits event
  **/
-function DataHandler() {
+function DataHandler(emitter) {
+	this.emitter = emitter;
 	this.states = {};
 }
+
+/**
+ *
+ * 
+ **/
+DataHandler.prototype.getEmitter = function() {
+	return this.emitter;
+};
 
 /**
  * Processes a bunch of data

@@ -9,6 +9,7 @@ var de = require('./dataEmitter.js');
 
 function UnityEmitter(connections) {
 	de.call(this);
+	this.connections = connections;
 }	
 util.inherits(UnityEmitter, de);
 
@@ -20,8 +21,9 @@ util.inherits(UnityEmitter, de);
 
 UnityEmitter.prototype.send = function(data) {
 	//TODO: tests
-	for(var c in this.connections) {
-		this.connections.send('{"command" : "' + data.command + '", "state" : "' + data.state + '"}')
+	console.log('Sending> '+ data, '('+ this.connections.clients.length+')');
+	for(var c in this.connections.clients){
+		this.connections.clients[c].send(data);
 	}
 };
 
