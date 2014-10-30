@@ -14,8 +14,12 @@ function EyeTribeDataHandler(emitter) {
 	EyeTribeDataHandler.super_.call(this);
 	//save object in context
 	this.emitter = emitter;
-	//keeps states values
-	this.state = {}; 
+	//
+	this.queues = {
+		winkleft: 0, 
+		winkright: 0,
+		blink: 0
+	}; 
 };
 util.inherits(EyeTribeDataHandler, dl);
 
@@ -24,19 +28,56 @@ util.inherits(EyeTribeDataHandler, dl);
  * @param {JSON} data - the data to process
  */
 EyeTribeDataHandler.prototype.process = function process(data) {
+	//Wink
 	if((data.lefteye.avg.x === 0 || data.righteye.avg.y ===0) && !(data.lefteye.avg.x === 0 && data.righteye.avg.y ===0)) {
-		if(!this.state.wink) {
-			console.log('Wink');
-			this.state.wink = true;
-			this.emitter.send('{"command": "wink", "state":"true"}');
+		//left wink
+		if(data.lefteye.avg.x === 0) {
+			queueTime(this.emitter, this.queues, 'winkleft');	
 		}
-	}else{
-		if(this.state.wink) {
-			console.log('Stop Wink');
-			this.state.wink = false;
-			this.emitter.send('{"command": "wink", "state":"false"}');
+		//right wink
+		if(data.righteye.avg.y === 0) {
+			queueTime(this.emitter, this.queues, 'winkright');	
 		}
 	}
+	//Blink
+	if(data.lefteye.avg.x === 0 && data.righteye.avg.y === 0 && data.lefteye.avg.y === 0 && data.righteye.avg.x === 0){
+			queueTime(this.emitter, this.queues, 'blink');	
+	}
 };
+
+/**
+ *
+ */
+function queueTime(emitter, queues, name) {
+		//add in queue
+        	queues[name]++;
+        	if(queues[name]===1) {
+        		//first one, send comand
+        		emitter.send(buildCommand(name, true));
+        	}
+        	//setting timeout
+        	setTimeout((function(emitter, queues, name){
+        		return function() {
+        			//remove from queue
+        			--queues[name];
+        			//if nothing left
+        			if(queues[name]===0)
+        				emitter.send(buildCommand(name, false));
+        		}
+        	}(emitter, queues, name)), 250);
+}
+
+
+/**
+ * Builds JSON.
+ * @private
+ * @param {String} name - name of the command
+ * @param {String} state - it's state
+ * @return {JSON} - the Object to be sent to client
+ */
+
+function buildCommand(name, state) {
+	return '{"command" : "'+ name +'", "state" : "'+ state +'"}';
+}
 
 module.exports = EyeTribeDataHandler;

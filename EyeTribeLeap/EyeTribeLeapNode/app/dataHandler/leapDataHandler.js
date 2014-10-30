@@ -15,10 +15,10 @@ function LeapDataHandler(emitter) {
 	LeapDataHandler.super_.call(this);
 	//save object in context
 	this.emitter = emitter;
-	//keeps states values
-	this.states = {};
-	//keeps id,name,timestamp of Gestures
-	this.timers= {};
+	//Keeps queues for certain gestures
+	this.queues = {
+		swipe: 0
+	};
 };
 util.inherits(LeapDataHandler, dl);
 
@@ -29,61 +29,41 @@ util.inherits(LeapDataHandler, dl);
 LeapDataHandler.prototype.process = function processGesture(data) {
 	if(data.type && data.state) {
 		switch(data.type) {
-			case 'circle': 
 			case 'swipe':
-				//Circle and swipe both have a "update" and "stop" state. So we deal with both the same
-				//if gesture is being performed
-				if(data.state === 'update') {
-					//and is set to stop
-		                	if(!this.states[data.type]) {
-		                		console.log('Doing ' + data.type);
-						//Set state to true, emit and run timer in case "stop" never happens or is too long to do so.
-		                		this.states[data.type] = true;
-						this.timers[data.type] = {when: Date.now(), id: data.id};
-						//console.log('Setting id at ', data.id);
-						this.emitter.send(buildCommand(data.type, this.states[data.type]));
-						var id = setTimer(this, data.type, (function(emitter) {
-							return function(stop) {
-								if(stop) {
-									emitter.send(buildCommand(data.type, false));
-								}
-							}
-						}(this.emitter)));
-						this.timers[data.type].toId = id;
-		                	}
-					//set to true, means it is still runing
-					else {
-						//updating timestamp
-						this.timers[data.type].when = Date.now()
-						this.timers[data.type].id = data.id;
+				//specific swipe gesture has stoped
+		                if(data.state === 'stop') {
+					//add in queue
+					this.queues.swipe++;
+					if(this.queues.swipe===1) {
+						//first one, send comand
+						this.emitter.send(buildCommand(data.type, true));
 					}
-					return false;
-		                }
-		                else if(data.state === 'stop') {
-					//Gesture stoped
-		                	if(this.states[data.type]) {
-		                		console.log('Stop ' + data.type);
-						//Set state to false if true previously (if not, it already happened, no need to do it again)
-						//and emit
-		                		this.states[data.type] = false;
-						clearTimeout(this.timers[data.type].toId);
-						this.emitter.send(buildCommand(data.type, this.states[data.type]));
-		                	}
-					return false;
+					//setting timeout
+					setTimeout((function(emitter, queues){
+						return function() {
+							//remove from queue
+							--queues.swipe;
+							//if nothing left
+							if(queues.swipe===0)
+								emitter.send(buildCommand(data.type, false));
+						}
+					}(this.emitter, this.queues)), 250);
 		                }
 				break;
 			case 'keyTap':
 			case 'screenTap':
-				console.log('Did ' + data.type);
-				//keyTab and screenTap are a "one time" gesture. It just happens
-				//so, emit and set timer to emit stop state
-				this.emitter.send(buildCommand(data.type, true));
-				var e = this.emitter;
-				setTimeout((function(emitter){
-					return function() {
-						emitter.send(buildCommand(data.type, false));
-					}
-				}(this.emitter)), 1000);
+			case 'circle':
+				//send command once one of these gestures has been performed.
+				if(data.state === 'stop') {
+					//emit command
+					this.emitter.send(buildCommand(data.type, true));
+					//emit stop 1s after
+					setTimeout((function(emitter){
+						return function() {
+							emitter.send(buildCommand(data.type, false));
+						}
+					}(this.emitter)), 250);
+				}
 				break;
 			default:
 				console.log('Not Recognised');
@@ -102,44 +82,6 @@ LeapDataHandler.prototype.process = function processGesture(data) {
 
 function buildCommand(name, state) {
 	return '{"command" : "'+ name +'", "state" : "'+ state +'"}';
-}
-
-/**
- * Reset state to false after a certain time
- * @private
- *
- */
-function setTimer(context, name, callback) {
-	var context = context;
-	//read current state, timestamp and id
-	//check it again Xseconds later
-	//callback with either "yep, send stop" or "nope, it's fine"
-	function getData() {
-		return {
-			id: context.timers[name].id,
-			ts: context.timers[name].when,
-			state: context.states[name]
-		}
-	};
-
-	//Get data before check
-	var dataBeforeCheck = getData();
-	var toid = setTimeout(function(){
-		var dataAfterCheck = getData();	
-		console.log('Before> ', dataBeforeCheck);
-		console.log('After> ', dataAfterCheck);
-		//
-		if(dataAfterCheck.id === dataBeforeCheck.id && dataAfterCheck.ts <= dataBeforeCheck.ts) {
-			callback(true);
-		}
-		else {
-			//callback(false);
-			setTimer(context, name, callback);
-		}
-			
-	}, 2000);
-
-	return toid;
 }
 
 module.exports = LeapDataHandler;

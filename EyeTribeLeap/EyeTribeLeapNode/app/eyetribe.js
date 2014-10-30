@@ -31,15 +31,13 @@ var EyeTribe = (function(handler){
 					console.log('TheEyeTribe close');
 				})
 				socket.on('data', function(data) {
-					//console.log(data);
 					try {
 						data = JSON.parse(data);
 						if(data.values && data.values.frame) {
 							handler.process(data.values.frame);
-							//handleFrameData(data.values.frame);
 						}
 					} catch(e) {
-					//	console.error('Malformed JSON', e);
+						console.error('Malformed JSON', e);
 					}
 				})
 
