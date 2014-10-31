@@ -39,16 +39,21 @@ var EyeTribe = (function(handler){
 					} catch(e) {
 						console.error('Malformed JSON', e);
 					}
-				})
-
+				});
+				
 				// Request tracker reading data
 				socket.write(JSON.stringify({
 					category: 'tracker',
 					request: 'set',
 					values: {'push': true}
 				}));
+
 			});
 			socket.setEncoding('utf8');
+
+			socket.on('error', function(err){
+				console.log('Can\'t connect the Eye Tribe. Make sure Server is running.');
+			});
 		}
 	}
 });
